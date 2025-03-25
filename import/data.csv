@@ -1,0 +1,10 @@
+type,name,code,subjectId,role,userId,classId
+period,2024.1,,,
+subject,Matemática,MAT101,,
+subject,Física,FIS202,,
+class,Turma A,MAT101,,
+class,Turma B,FIS202,,
+user,Ana Silva,,professor,,
+user,Carlos Souza,,student,,
+enrollment,,,student,Carlos Souza,Turma A
+enrollment,,,professor,Ana Silva,Turma B
