@@ -29,7 +29,7 @@ const handleFileUpload = (event) => {
 
 const submitData = async () => {
   try {
-    const response = await axios.post('http://localhost:3333/import/csv', {
+    const response = await axios.post(`${import.meta.env.API_URL}/import/csv`, {
       data: tableData.value,
     });
     alert('Dados importados com sucesso!');
