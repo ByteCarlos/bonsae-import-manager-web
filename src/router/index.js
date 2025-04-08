@@ -1,8 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import CsvUploadView from '@/views/CsvUploadView.vue';
+import Turma from '@/views/Turma.vue';
+import Professores from '@/views/Professores.vue';
+import ViculoAluno from '@/views/VinculoAluno.vue';
+import VinculoProfessor from '@/views/VinculoProfessor.vue';
 
 const routes = [
   { path: '/', component: CsvUploadView },
+
+  {path: '/Turma', component: Turma},
+  {path: '/Professores', component: Professores},
+  {path: '/VinculoAluno', component: ViculoAluno },
+  {path: '/VinculoProfessor', component: VinculoProfessor},
+
 ];
 
 const router = createRouter({

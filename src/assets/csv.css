@@ -1,0 +1,90 @@
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+    background: #2c2f3f;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .custom-file-upload {
+    display: inline-block;
+    background: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+  }
+
+  .row-error {
+  background: rgba(255, 77, 77, 0.3); 
+}
+  
+  .custom-file-upload:hover {
+    background: #45a049;
+  }
+  
+  input[type="file"] {
+    display: none;
+  }
+
+  .error-box {
+    background: #ff4d4d;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .error-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .error-box li {
+    margin: 5px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #444857;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #666b7a;
+    text-align: left;
+  }
+  
+  th {
+    background: #3a3d4f;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    table {
+      font-size: 14px;
+    }
+  
+    .custom-file-upload {
+      width: 100%;
+      display: block;
+    }
+  }
