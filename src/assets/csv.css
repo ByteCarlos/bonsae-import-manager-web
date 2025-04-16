@@ -54,24 +54,7 @@
     margin: 5px 0;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: #444857;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  th, td {
-    padding: 12px;
-    border: 1px solid #666b7a;
-    text-align: left;
-  }
-  
-  th {
-    background: #3a3d4f;
-  }
+
 
   @media (max-width: 600px) {
     .container {
