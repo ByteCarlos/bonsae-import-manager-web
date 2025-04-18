@@ -30,6 +30,14 @@
     margin-bottom: 24px;
   }
   
+  .botaoHeader {
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 13px;
+        margin-right: 6px;
+        cursor: pointer;           
+  }
   h1 {
     font-weight: 600;
     margin-bottom: 5px;

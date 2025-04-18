@@ -5,6 +5,7 @@ import Professores from '@/views/Professores.vue';
 import ViculoAluno from '@/views/VinculoAluno.vue';
 import VinculoProfessor from '@/views/VinculoProfessor.vue';
 import viewPrincipal  from '@/views/viewPrincipal.vue';
+import viewSecundaria from '@/views/viewSecundaria.vue';
 
 const routes = [
   { path: '/csv', component: CsvUploadView },
@@ -13,7 +14,9 @@ const routes = [
   {path: '/Professores', component: Professores},
   {path: '/VinculoAluno', component: ViculoAluno },
   {path: '/VinculoProfessor', component: VinculoProfessor},
-  {path: '/', component: viewPrincipal}
+  {path: '/', component: viewPrincipal},
+
+  {path: '/secundaria', component: viewSecundaria}
 
 ];
 

@@ -1,25 +1,27 @@
 <template>
-    <link rel="stylesheet" href="/src/assets/princal.css">
+    <link rel="stylesheet" href="/src/assets/principal.css">
     <div class="pagina">
-      <header class="cabecalho">
+    <link rel="stylesheet" href="/src/assets/header.css">
+     <header class="cabecalho">
         <img src="/src/assets/academy-2.png" alt="Logo Bonsae" width="110px">
   
-        <div class="icones">
-          <button class="botaoTabela"><span class="icone" id="notificacao">🔔</span></button>
-          <button class="botaoTabela"><span class="icone" id="login">👤 Elsa ▼</span></button> 
+        <div class="icones" >
+          <button class="botaoHeader"><span class="icone" id="notificacao">🔔</span></button>
+          <button class="botaoHeader"><span class="icone" id="login">👤 Elsa ▼</span></button> 
         </div>
       </header>
   
-      <main>
+      
         <div class="topo-conteudo">
           <div>
             <h1>Importação de Dados - Controle de Processo </h1>
             <p>Gerencie e controle suas importações de dados de forma eficiente.</p>
           </div>
-          <RouterLink to="/csv" class="botao" id="botaoNovoProcesso">
+          <RouterLink to="/secundaria" class="botao" id="botaoNovoProcesso">
             Novo Processo
           </RouterLink>
         </div>
+
         
 
         <table class="tabela-processos">
@@ -88,11 +90,13 @@
      
           </tbody>
         </table>
-      </main>
+      
     </div>
   </template>
 
   
 
   
-  
+  <script>
+
+  </script>

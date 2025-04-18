@@ -1,0 +1,57 @@
+.paginaSecundaria {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+
+
+
+.v-card-title {
+    padding: 15px;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 6px;
+   
+}
+
+.topo-conteudo-secundaria {
+    margin-top: 34px;
+    margin-bottom: 70px;
+}
+
+.topo-conteudo-secundaria h1 {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 2.3rem;
+}
+
+.v-card {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.4);
+   
+}
+
+
+.v-tabs {
+    border-bottom: 2px solid #ddd;
+}
+
+.v-tab {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: capitalize;
+    text-align: left;
+
+}
+
+.v-card-text {
+    padding: 20px;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;    
+}
