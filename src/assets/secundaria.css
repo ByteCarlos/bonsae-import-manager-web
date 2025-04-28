@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
+  overflow: auto; 
 }
 
 .form-group {
@@ -50,10 +51,39 @@
 .form-disciplinas {
   padding: 0px 40px 40px 40px;
 }
+
+
+.csv-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  min-height: 200px; /* Adiciona altura mínima */
+  table-layout: fixed; /* Garante que a tabela se ajuste corretamente */
+}
+
+.csv-table th, .csv-table td {
+  padding: 8px 16px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.csv-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.csv-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.csv-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+
 .dropbox {
   border: 2px dashed #0a53be;
-  padding: 10px 10px;
-
+  padding: 10px;
   min-height: 200px;
   display: flex;
   justify-content: center;
@@ -61,12 +91,18 @@
   flex-direction: column;
   gap: 16px;
   cursor: pointer;
+  transition: border-color 0.3s ease;
 }
 
 .input-file {
-  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  height: 200px;
+  height: 100%;
+  z-index: 1; 
 }
 
 .titulodisciplinas {
@@ -80,6 +116,7 @@
   background-color: #1d4ed8;
   transform: scale(1.05);
 }
+
 .v-card-title {
   padding: 15px;
   font-size: 25px;
@@ -121,3 +158,4 @@
   color: #555;
   line-height: 1.6;
 }
+

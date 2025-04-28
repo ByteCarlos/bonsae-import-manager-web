@@ -33,36 +33,53 @@
           </v-tabs-window-item>
 
           <v-tabs-window-item value="disciplinas">
-            <form
-              class="form-disciplinas"
-              action=""
-              enctype="multipart/form-data"
-            >
+            <form class="form-disciplinas" action="" enctype="multipart/form-data">
               <h3 class="titulodisciplinas">Disciplinas</h3>
-              <div class="dropbox"  
-              @dragover.prevent
-              @drop.prevent="handleFileDrop">
-                <!-- aqui vai ter um v-if e sera passado se o arquivo foi passado, aparecer a tabela, ou o required ja faz essa funcao-->
-                <!--usar o CsvUploadView como referencia  -->
-                <!-- pode usar o reportValidity()  https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/reportValidity-->
-                <input type="file" class="input-file" required @change="handleFileUpload"  accept=".csv" />
+              <div 
+                class="dropbox" 
+                @dragover="handleDragOver" 
+                @drop="handleDrop"
+                @click="triggerFileInput"
+              >
+                <input 
+                  type="file" 
+                  class="input-file" 
+                  ref="fileInput" 
+                  required 
+                  @change="handleFileUpload" 
+                  accept=".csv" 
+                  style="display:none;" 
+                />
                 <img src="/src/assets/ICON-DOWLOADA.jpg" alt="" width="30px" />
                 <p>Arraste e solte um arquivo CSV ou clique para selecionar</p>
               </div>
             </form>
 
-            <table v-if="tableData.length" >
-              <thead>
-                <tr>
-                  <th v-for="col in columns" :key="col">{{ col }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(row, index) in tableData" :key="index">
-                  <td v-for="col in columns" :key="col">{{ row[col] }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div v-if="loading">
+              <p>Carregando dados...</p>
+            </div>
+
+            <div v-if="!loading && tableDataByTab[tab] && tableDataByTab[tab].tableData.length">
+              <table class="csv-table">
+                <thead>
+                  <tr>
+                    <th v-for="col in tableDataByTab[tab].columns" :key="col">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
+                    <td v-for="col in tableDataByTab[tab].columns" :key="col">
+                      <input 
+                        v-model="row[col]" 
+                        class="editable-cell" 
+                        :placeholder="'Vazio'" 
+                        style="width: 100%; padding: 4px;"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             <button class="form-button" @click.prevent="submitData" style="margin-left: 40px;">
               Importar
@@ -70,74 +87,148 @@
           </v-tabs-window-item>
 
           <v-tabs-window-item value="turmas">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minima
-            ipsum nulla facilis dolorum doloremque quam alias rerum rem. Modi
-            molestiae quos repellendus est facilis facere cupiditate, et
-            assumenda nisi inventore.
+            <form class="form-disciplinas" action="" enctype="multipart/form-data">
+              <h3 class="titulodisciplinas">Turmas</h3>
+              <div 
+                class="dropbox" 
+                @dragover="handleDragOver" 
+                @drop="handleDrop"
+                @click="triggerFileInput"
+              >
+                <input 
+                  type="file" 
+                  class="input-file" 
+                  ref="fileInput" 
+                  required 
+                  @change="handleFileUpload" 
+                  accept=".csv" 
+                  style="display:none;" 
+                />
+                <img src="/src/assets/ICON-DOWLOADA.jpg" alt="" width="30px" />
+                <p>Arraste e solte um arquivo CSV ou clique para selecionar</p>
+              </div>
+            </form>
+
+            <div v-if="loading">
+              <p>Carregando dados...</p>
+            </div>
+
+            <div v-if="!loading && tableDataByTab[tab] && tableDataByTab[tab].tableData.length">
+              <table class="csv-table">
+                <thead>
+                  <tr>
+                    <th v-for="col in tableDataByTab[tab].columns" :key="col">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
+                    <td v-for="col in tableDataByTab[tab].columns" :key="col">
+                      <input 
+                        v-model="row[col]" 
+                        class="editable-cell" 
+                        :placeholder="'Vazio'" 
+                        style="width: 100%; padding: 4px;"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
+            <button class="form-button" @click.prevent="submitData" style="margin-left: 40px;">
+              Importar
+            </button>
           </v-tabs-window-item>
+
         </v-tabs-window>
       </v-card-text>
     </v-card>
   </div>
 </template>
+
 <script>
-import { ref } from 'vue';
 import { parse } from 'papaparse';
-import axios from 'axios';
+import { validateDisciplinaCsv } from '../stores/validateDisciplinaCsv';
+import { validateTurmaCsv } from '../stores/validateTurmaCsv';
 
 export default {
-  data: () => ({
+  data() {
+  return {
     tab: null,
-    file: ref(null),
-    tableData: ref([]),
-    columns: ref([]),
-  }),
-
+    loading: false,
+    tableDataByTab: {
+      disciplinas: {
+        tableData: [],
+        columns: []
+      },
+      turmas: {
+        tableData: [],
+        columns: []
+      },
+      // depois adiciona usuários, vínculos, etc
+    },
+  };
+},
   methods: {
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    handleDragOver(event) {
+      event.preventDefault();
+    },
+    handleDrop(event) {
+      event.preventDefault();
+      const droppedFile = event.dataTransfer.files[0];
+      if (droppedFile && droppedFile.type === 'text/csv') {
+        this.handleFileUpload({ target: { files: [droppedFile] } });
+      }
+    },
     handleFileUpload(event) {
       const selectedFile = event.target.files[0];
       if (!selectedFile) return;
-      this.processFile(selectedFile);
-    },
 
-    handleFileDrop(event) {
-      const droppedFile = event.dataTransfer.files[0];
-      if (!droppedFile) return;
-      this.processFile(droppedFile);
-    },
-
-    processFile(file) {
-      this.file = file;
-
+      this.loading = true;
       const reader = new FileReader();
       reader.onload = (e) => {
         const csv = e.target.result;
+
         parse(csv, {
           header: true,
           skipEmptyLines: true,
           complete: (result) => {
-            this.tableData = result.data;
-            this.columns = result.meta.fields;
+            let validation;
+
+            if (this.tab === 'disciplinas') {
+              validation = validateDisciplinaCsv(result);
+            }
+            else if (this.tab === 'turmas') {
+              validation = validateTurmaCsv(result);
+            }
+
+            if (!validation.isValid) {
+              alert(validation.error);
+              this.loading = false;
+              return;
+            }
+            
+            this.tableDataByTab[this.tab].tableData = validation.data;
+            this.tableDataByTab[this.tab].columns = result.meta.fields;
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('CSV Parsing error:', error);
+            this.loading = false;
           },
         });
       };
-      reader.readAsText(file);
+      reader.readAsText(selectedFile);
     },
 
-    async submitData() {
-      try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/import/csv`,
-          {
-            data: this.tableData,
-          }
-        );
-        alert('Dados importados com sucesso!');
-        console.log(response.data);
-      } catch (error) {
-        console.error('Erro ao importar:', error);
+    submitData() {
+      //TODO adicionar o metodo para fazer o post no backend
+        console.log('Submetendo dados:', this.tableDataByTab[this.tab].tableData);
       }
-    },
   },
 };
 </script>
