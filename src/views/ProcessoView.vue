@@ -1,7 +1,7 @@
 <template>
   <link rel="stylesheet" href="/src/assets/Processos.css" />
   <div class="pagina-processo">
-    <!-- Cabeçalho -->
+    
     <header class="cabecalho">
       <img src="/src/assets/academy-2.png" alt="Logo Bonsae" width="110px" />
       <div class="icones">
