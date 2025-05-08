@@ -96,6 +96,23 @@
               <p>Carregando dados...</p>
             </div>
 
+            <v-dialog v-model="showErrorModal" max-width="600">
+              <v-card>
+                <v-card-title class="text-h6">Erros encontrados</v-card-title>
+                <v-card-text>
+                  <ul>
+                    <li v-for="(error, index) in currentErrors" :key="index">
+                      {{ error }}
+                    </li>
+                  </ul>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click="showErrorModal = false">Fechar</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
             <div
               v-if="
                 !loading &&
@@ -169,6 +186,23 @@
               <p>Carregando dados...</p>
             </div>
 
+            <v-dialog v-model="showErrorModal" max-width="600">
+              <v-card>
+                <v-card-title class="text-h6">Erros encontrados</v-card-title>
+                <v-card-text>
+                  <ul>
+                    <li v-for="(error, index) in currentErrors" :key="index">
+                      {{ error }}
+                    </li>
+                  </ul>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click="showErrorModal = false">Fechar</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
             <div
               v-if="
                 !loading &&
@@ -240,6 +274,23 @@
             <div v-if="loading">
               <p>Carregando dados...</p>
             </div>
+
+            <v-dialog v-model="showErrorModal" max-width="600">
+              <v-card>
+                <v-card-title class="text-h6">Erros encontrados</v-card-title>
+                <v-card-text>
+                  <ul>
+                    <li v-for="(error, index) in currentErrors" :key="index">
+                      {{ error }}
+                    </li>
+                  </ul>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click="showErrorModal = false">Fechar</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
 
             <div
               v-if="
@@ -314,6 +365,23 @@
               <p>Carregando dados...</p>
             </div>
 
+            <v-dialog v-model="showErrorModal" max-width="600">
+              <v-card>
+                <v-card-title class="text-h6">Erros encontrados</v-card-title>
+                <v-card-text>
+                  <ul>
+                    <li v-for="(error, index) in currentErrors" :key="index">
+                      {{ error }}
+                    </li>
+                  </ul>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click="showErrorModal = false">Fechar</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
             <div
               v-if="
                 !loading &&
@@ -369,6 +437,8 @@ import { validateTurmaCsv } from "../stores/validateTurmaCsv";
 export default {
   data() {
     return {
+      showErrorModal: false,
+      currentErrors: [],
       tab: null,
       loading: false,
       tableDataByTab: {
@@ -385,6 +455,10 @@ export default {
     };
   },
   methods: {
+    showErrors(errors) {
+      this.currentErrors = errors;
+      this.showErrorModal = true;
+    },
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
@@ -420,7 +494,7 @@ export default {
             }
 
             if (!validation.isValid) {
-              alert(validation.error);
+              this.showErrors(validation.errors || [validation.error]);
               this.loading = false;
               return;
             }
