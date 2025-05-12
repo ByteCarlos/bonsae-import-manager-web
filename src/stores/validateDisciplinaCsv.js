@@ -34,6 +34,7 @@ export const validateDisciplinaCsv = (csvData) => {
       const value = row[column];
       if (!value || value.trim() === '') {
         errors.push(`Linha ${index + 2}: Campo "${column}" não preenchido.`);
+        //objeto erro tem tudo de erro q vc tem
       }
     });
 

@@ -87,8 +87,8 @@
           </v-tabs-window-item>
 
           <v-tabs-window-item value="turmas">
-            <form class="form-disciplinas" action="" enctype="multipart/form-data">
-              <h3 class="titulodisciplinas">Turmas</h3>
+            <form class="form-turmas" action="" enctype="multipart/form-data">
+              <h3 class="tituloturmas">Turmas</h3>
               <div 
                 class="dropbox" 
                 @dragover="handleDragOver" 
@@ -141,35 +141,105 @@
             </button>
           </v-tabs-window-item>
 
+        <v-tabs-window-item value ="usuarios">
+          <form class="form-usuarios" action="" enctype="multipart/form-data">
+              <h3 class="titulousuarios">Usuários</h3>
+              <div 
+                class="dropbox" 
+                @dragover="handleDragOver" 
+                @drop="handleDrop"
+                @click="triggerFileInput"
+              >
+                <input 
+                  type="file" 
+                  class="input-file" 
+                  ref="fileInput" 
+                  required 
+                  @change="handleFileUpload" 
+                  accept=".csv" 
+                  style="display:none;" 
+                />
+                <img src="/src/assets/ICON-DOWLOADA.jpg" alt="" width="30px" />
+                <p>Arraste e solte um arquivo CSV ou clique para selecionar</p>
+              </div>
+            </form>
+
+            <div v-if="loading">
+              <p>Carregando dados...</p>
+            </div>
+
+            <div v-if="!loading && tableDataByTab[tab] && tableDataByTab[tab].tableData.length">
+              <table class="csv-table">
+                <thead>
+                  <tr>
+                    <th v-for="col in tableDataByTab[tab].columns" :key="col">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
+                    <td v-for="col in tableDataByTab[tab].columns" :key="col">
+                      <input 
+                        v-model="row[col]" 
+                        class="editable-cell" 
+                        :placeholder="'Vazio'" 
+                        style="width: 100%; padding: 4px;"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <button class="form-button" @click.prevent="submitData" style="margin-left: 40px;">
+              Importar
+            </button>
+        </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
     </v-card>
+    <v-alert
+      v-if="errorMessage"
+      type="error"
+      dismissible
+      class="mb-4"
+    >
+      {{ errorMessage }}
+    </v-alert>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { parse } from 'papaparse';
 import { validateDisciplinaCsv } from '../stores/validateDisciplinaCsv';
 import { validateTurmaCsv } from '../stores/validateTurmaCsv';
+import { validateUsuarioCsv } from '../stores/validadateUsuarioCsv';
+
+const errorMessage = ref('');
 
 export default {
   data() {
-  return {
-    tab: null,
-    loading: false,
-    tableDataByTab: {
-      disciplinas: {
-        tableData: [],
-        columns: []
+    return {
+      tab: null,
+      loading: false,
+      errorMessage: '', 
+      tableDataByTab: {
+        disciplinas: {
+          tableData: [],
+          columns: []
+        },
+        turmas: {
+          tableData: [],
+          columns: []
+        },
+        usuarios: {
+          tableData: [],
+          columns: []
+        },
       },
-      turmas: {
-        tableData: [],
-        columns: []
-      },
-      // depois adiciona usuários, vínculos, etc
-    },
-  };
-},
+    };
+  },
   methods: {
     triggerFileInput() {
       this.$refs.fileInput.click();
@@ -201,33 +271,38 @@ export default {
 
             if (this.tab === 'disciplinas') {
               validation = validateDisciplinaCsv(result);
-            }
-            else if (this.tab === 'turmas') {
+            } else if (this.tab === 'turmas') {
               validation = validateTurmaCsv(result);
+            } else if (this.tab === 'usuarios') {
+              validation = validateUsuarioCsv(result);
             }
 
             if (!validation.isValid) {
-              alert(validation.error);
+              this.errorMessage = validation.error; 
               this.loading = false;
               return;
             }
-            
+
+            this.errorMessage = ''; 
             this.tableDataByTab[this.tab].tableData = validation.data;
             this.tableDataByTab[this.tab].columns = result.meta.fields;
             this.loading = false;
           },
           error: (error) => {
             console.error('CSV Parsing error:', error);
+            this.errorMessage = 'Erro ao ler o CSV.';
             this.loading = false;
           },
         });
       };
       reader.readAsText(selectedFile);
     },
+    
 
     submitData() {
       //TODO adicionar o metodo para fazer o post no backend
         console.log('Submetendo dados:', this.tableDataByTab[this.tab].tableData);
+        
       }
   },
 };
