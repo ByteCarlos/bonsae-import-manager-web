@@ -1,0 +1,116 @@
+.pagina-processo {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px 32px;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.icones .botaoHeader {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+}
+
+.detalhes-processo {
+  margin-bottom: 30px;
+}
+
+.detalhes-processo .voltar {
+  text-decoration: none;
+  color: #2563eb;
+  font-size: 16px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.detalhes-processo h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.resumo-processo {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.card {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  flex: 1;
+}
+
+.card h3 {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.card p {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.card.status .concluido {
+  color: #10b981;
+}
+
+.etapas-importacao,
+.arquivos-envolvidos {
+  margin-top: 30px;
+}
+
+.tabela-etapas,
+.tabela-arquivos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabela-etapas th,
+.tabela-arquivos th {
+  background: #f3f4f6;
+  text-align: left;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.tabela-etapas td,
+.tabela-arquivos td {
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.tabela-etapas .concluido,
+.tabela-arquivos .baixar {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tabela-arquivos .baixar:hover {
+  text-decoration: underline;
+}
+.voltar {
+    text-decoration: none;
+    color: #2563eb;
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: inline-block;
+}

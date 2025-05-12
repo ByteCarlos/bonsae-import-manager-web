@@ -53,7 +53,10 @@
               <td>17/03/2025</td>
               <td>20/03/2025</td>
               <td><span class="status concluido">Concluída</span></td>
-              <td><button class="botaoTabela" id="botaoVizualizar">Visualizar</button></td>
+              <td>
+                <RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
+                  Visualizar </RouterLink>
+              </td>
             </tr>
             <tr>
               <td>17032025</td>
@@ -61,7 +64,8 @@
               <td>17/03/2025</td>
               <td>20/03/2025</td>
               <td><span class="status concluido">Concluída</span></td>
-              <td><button class="botaoTabela" id="botaoVizualizar">Visualizar</button></td>
+              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
+                Visualizar </RouterLink></td>
             </tr>
             <tr>
               <td>17032025</td>
@@ -69,7 +73,8 @@
               <td>17/03/2025</td>
               <td>20/03/2025</td>
               <td><span class="status concluido">Concluída</span></td>
-              <td><button class="botaoTabela" id="botaoVizualizar">Visualizar</button></td>
+              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
+                Visualizar </RouterLink></td>
             </tr>
             <tr>
               <td>17032025</td>
@@ -77,7 +82,8 @@
               <td>17/03/2025</td>
               <td>20/03/2025</td>
               <td><span class="status concluido">Concluída</span></td>
-              <td><button class="botaoTabela" id="botaoVizualizar">Visualizar</button></td>
+              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
+                Visualizar </RouterLink></td>
             </tr>
             <tr>
               <td>17032025</td>
@@ -85,7 +91,8 @@
               <td>17/03/2025</td>
               <td>20/03/2025</td>
               <td><span class="status concluido">Concluída</span></td>
-              <td><button class="botaoTabela" id="botaoVizualizar">Visualizar</button></td>
+              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
+                Visualizar </RouterLink></td>
             </tr>
      
           </tbody>

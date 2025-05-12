@@ -4,15 +4,15 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
-  overflow: auto; 
+  overflow: auto;
 }
 
 .form-group {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 20px;
+  align-items: flex-start;
   max-width: 300px;
-  min-height: 200px;
+  min-height: 100px;
   padding: 0 20px;
 }
 
@@ -24,6 +24,7 @@
 }
 
 .form-input {
+  flex: 1;
   padding: 10px 14px;
   font-size: 14px;
   border: 1px solid #d1d5db;
@@ -46,22 +47,24 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  margin: 0 20px;
+  width: 180px;
 }
 
 .form-disciplinas {
   padding: 0px 40px 40px 40px;
 }
 
-
 .csv-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  min-height: 200px; /* Adiciona altura mínima */
-  table-layout: fixed; /* Garante que a tabela se ajuste corretamente */
+  min-height: 200px;
+  table-layout: fixed;
 }
 
-.csv-table th, .csv-table td {
+.csv-table th,
+.csv-table td {
   padding: 8px 16px;
   text-align: left;
   border: 1px solid #ddd;
@@ -79,7 +82,6 @@
 .csv-table tr:hover {
   background-color: #f1f1f1;
 }
-
 
 .dropbox {
   border: 2px dashed #0a53be;
@@ -102,7 +104,7 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; 
+  z-index: 1;
 }
 
 .titulodisciplinas {
@@ -159,3 +161,28 @@
   line-height: 1.6;
 }
 
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+  padding: 16px 32px;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+.botaoHeader {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 300px;
+}
