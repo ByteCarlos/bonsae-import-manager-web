@@ -32,22 +32,34 @@
                   type="text"
                   placeholder="Ex: 2024/1"
                   class="form-input"
+                  v-model="periodoForm.periodoLetivo"
+                  :class="{'input-error': periodoError}"
                 />
               </div>
               <div class="input-group">
-                <label for="DataInicio" class="form-label"
-                  >Data Inicial</label
-                >
-                <input type="text" id="dataInicial" class="form-input" placeholder="Ex: 01/01/2025" @input="formatDateInput($event)" maxlength="10"/>
+                <label for="DataInicio" class="form-label">Data Inicial</label>
+                <input
+                  type="date"
+                  id="dataInicial"
+                  class="form-input"
+                  placeholder="Ex: 01/01/2025"
+                  v-model="periodoForm.dataInicial"
+                  :class="{'input-error': periodoError}"
+                />
               </div>
               <div class="input-group">
-                <label for="dataFinal" class="form-label"
-                  >Data Final</label
-                >
-                <input type="text" id="dataFinal" class="form-input" placeholder="Ex: 01/01/2025" @input="formatDateInput($event)" maxlength="10"/>
+                <label for="dataFinal" class="form-label">Data Final</label>
+                <input
+                  type="date"
+                  id="dataFinal"
+                  class="form-input"
+                  placeholder="Ex: 01/01/2025"
+                  v-model="periodoForm.dataFinal"
+                  :class="{'input-error': periodoError}"
+                />
               </div>
             </div>
-            <button class="form-button" @click="completePeriodo">Continuar</button>
+            <button class="form-button" :disabled="!isPeriodoValid" @click="completePeriodo">Continuar</button>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="disciplinas">
@@ -427,8 +439,23 @@ export default {
           turmas: false,
           usuarios: false,
         },
+        periodoForm: {
+          periodoLetivo: '',
+          dataInicial: '',
+          dataFinal: '',
+        },
+        periodoError: false,
       };
     },
+  computed: {
+    isPeriodoValid() {
+      return (
+        this.periodoForm.periodoLetivo.trim() !== '' &&
+        this.periodoForm.dataInicial.trim().length === 10 &&
+        this.periodoForm.dataFinal.trim().length === 10
+      );
+    },
+  },
   methods: {
     showErrors(errors) {
       this.currentErrors = errors;
@@ -501,6 +528,11 @@ export default {
         
     },
     completePeriodo() {
+      if (!this.isPeriodoValid) {
+        this.periodoError = true;
+        return;
+      }
+      this.periodoError = false;
       this.completed.periodo = true;
       this.tab = 'disciplinas';
     },
@@ -519,3 +551,16 @@ export default {
   },
 };
 </script>
+
+<style>
+.input-error {
+  border-color: #ef4444 !important;
+  background: #fff6f6;
+}
+.form-button:disabled {
+  background: #d1d5db !important;
+  color: #888 !important;
+  cursor: not-allowed !important;
+  border: none;
+}
+</style>
