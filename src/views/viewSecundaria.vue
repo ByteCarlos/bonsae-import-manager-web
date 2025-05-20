@@ -3,15 +3,6 @@
   <div class="paginaSecundaria">
     <header class="cabecalho">
       <img src="/src/assets/academy-2.png" alt="Logo Bonsae" width="110px" />
-
-      <div class="icones">
-        <button class="botaoHeader">
-          <span class="icone" id="notificacao">🔔</span>
-        </button>
-        <button class="botaoHeader">
-          <span class="icone" id="login">👤 Elsa ▼</span>
-        </button>
-      </div>
     </header>
 
     <div class="topo-conteudo-secundaria">
