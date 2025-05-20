@@ -15,10 +15,10 @@
       </v-card-title>
       <v-tabs v-model="tab" bg-color="white" size="large" grow>
         <v-tab value="periodo">Período</v-tab>
-        <v-tab value="disciplinas">Disciplinas</v-tab>
-        <v-tab value="turmas">Turmas</v-tab>
-        <v-tab value="usuarios">Usuários</v-tab>
-        <v-tab value="vinculos">Vínculos</v-tab>
+        <v-tab value="disciplinas" :disabled="!completed.periodo">Disciplinas</v-tab>
+        <v-tab value="turmas" :disabled="!completed.disciplinas">Turmas</v-tab>
+        <v-tab value="usuarios" :disabled="!completed.turmas">Usuários</v-tab>
+        <v-tab value="vinculos" :disabled="!completed.usuarios">Vínculos</v-tab>
       </v-tabs>
 
       <v-card-text>
@@ -47,7 +47,7 @@
                 <input type="text" id="dataFinal" class="form-input" placeholder="Ex: 01/01/2025" @input="formatDateInput($event)" maxlength="10"/>
               </div>
             </div>
-            <button class="form-button">Continuar</button>
+            <button class="form-button" @click="completePeriodo">Continuar</button>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="disciplinas">
@@ -129,15 +129,8 @@
                   </tr>
                 </tbody>
               </table>
+              <button class="form-button" @click="completeDisciplinas" style="margin-left: 40px">Continuar</button>
             </div>
-
-            <button
-              class="form-button"
-              @click.prevent="submitData"
-              style="margin-left: 40px"
-            >
-              Importar
-            </button>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="turmas">
@@ -215,15 +208,8 @@
                   </tr>
                 </tbody>
               </table>
+              <button class="form-button" @click="completeTurmas" style="margin-left: 40px">Continuar</button>
             </div>
-
-            <button
-              class="form-button"
-              @click.prevent="submitData"
-              style="margin-left: 40px"
-            >
-              Importar
-            </button>
           </v-tabs-window-item>
           <v-tabs-window-item value="usuarios">
             <form
@@ -304,15 +290,8 @@
                   </tr>
                 </tbody>
               </table>
+              <button class="form-button" @click="completeUsuarios" style="margin-left: 40px">Continuar</button>
             </div>
-
-            <button
-              class="form-button"
-              @click.prevent="submitData"
-              style="margin-left: 40px"
-            >
-              Importar
-            </button>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="vinculos">
@@ -395,68 +374,7 @@
                 </tbody>
               </table>
             </div>
-
-            <button
-              class="form-button"
-              @click.prevent="submitData"
-              style="margin-left: 40px"
-            >
-              Importar
-            </button>
           </v-tabs-window-item>
-        <v-tabs-window-item value ="usuarios">
-          <form class="form-usuarios" action="" enctype="multipart/form-data">
-              <h3 class="titulousuarios">Usuários</h3>
-              <div 
-                class="dropbox" 
-                @dragover="handleDragOver" 
-                @drop="handleDrop"
-                @click="triggerFileInput"
-              >
-                <input 
-                  type="file" 
-                  class="input-file" 
-                  ref="fileInput" 
-                  required 
-                  @change="handleFileUpload" 
-                  accept=".csv" 
-                  style="display:none;" 
-                />
-                <img src="/src/assets/ICON-DOWLOADA.jpg" alt="" width="30px" />
-                <p>Arraste e solte um arquivo CSV ou clique para selecionar</p>
-              </div>
-            </form>
-
-            <div v-if="loading">
-              <p>Carregando dados...</p>
-            </div>
-
-            <div v-if="!loading && tableDataByTab[tab] && tableDataByTab[tab].tableData.length">
-              <table class="csv-table">
-                <thead>
-                  <tr>
-                    <th v-for="col in tableDataByTab[tab].columns" :key="col">{{ col }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
-                    <td v-for="col in tableDataByTab[tab].columns" :key="col">
-                      <input 
-                        v-model="row[col]" 
-                        class="editable-cell" 
-                        :placeholder="'Vazio'" 
-                        style="width: 100%; padding: 4px;"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <button class="form-button" @click.prevent="submitData" style="margin-left: 40px;">
-              Importar
-            </button>
-        </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
     </v-card>
@@ -486,7 +404,7 @@ export default {
       return {
       showErrorModal: false,
       currentErrors: [],
-        tab: null,
+        tab: 'periodo',
         loading: false,
         errorMessage: '', 
       tableDataByTab: {
@@ -502,6 +420,12 @@ export default {
           tableData: [],
           columns: []
         },
+        },
+        completed: {
+          periodo: false,
+          disciplinas: false,
+          turmas: false,
+          usuarios: false,
         },
       };
     },
@@ -575,6 +499,22 @@ export default {
      
       console.log("Submetendo dados:", this.tableDataByTab[this.tab].tableData);
         
+    },
+    completePeriodo() {
+      this.completed.periodo = true;
+      this.tab = 'disciplinas';
+    },
+    completeDisciplinas() {
+      this.completed.disciplinas = true;
+      this.tab = 'turmas';
+    },
+    completeTurmas() {
+      this.completed.turmas = true;
+      this.tab = 'usuarios';
+    },
+    completeUsuarios() {
+      this.completed.usuarios = true;
+      this.tab = 'vinculos';
     },
   },
 };
