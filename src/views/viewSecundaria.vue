@@ -35,22 +35,16 @@
                 />
               </div>
               <div class="input-group">
-                <label for="identificacao" class="form-label"
-                  >identificação</label
-                >
-                <input type="text" id="identificacao" class="form-input" placeholder="Ex: 10032025"/>
-              </div>
-              <div class="input-group">
                 <label for="DataInicio" class="form-label"
                   >Data Inicial</label
                 >
-                <input type="text" id="dataInicial" class="form-input" placeholder="Ex: 01/2025"/>
+                <input type="text" id="dataInicial" class="form-input" placeholder="Ex: 01/01/2025" @input="formatDateInput($event)" maxlength="10"/>
               </div>
               <div class="input-group">
                 <label for="dataFinal" class="form-label"
                   >Data Final</label
                 >
-                <input type="text" id="dataFinal" class="form-input" placeholder="Ex: 03/2025" />
+                <input type="text" id="dataFinal" class="form-input" placeholder="Ex: 01/01/2025" @input="formatDateInput($event)" maxlength="10"/>
               </div>
             </div>
             <button class="form-button">Continuar</button>
@@ -571,8 +565,12 @@ export default {
       };
       reader.readAsText(selectedFile);
     },
-    
-
+    formatDateInput(event) {
+      let value = event.target.value.replace(/\D/g, '');
+      if (value.length > 2) value = value.slice(0,2) + '/' + value.slice(2);
+      if (value.length > 5) value = value.slice(0,5) + '/' + value.slice(5,9);
+      event.target.value = value.slice(0, 10);
+    },
     submitData() {
      
       console.log("Submetendo dados:", this.tableDataByTab[this.tab].tableData);

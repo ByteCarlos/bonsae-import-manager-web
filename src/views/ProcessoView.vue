@@ -64,41 +64,5 @@
         </tbody>
       </table>
     </div>
-
-    
-    <div class="arquivos-envolvidos">
-      <h2>Arquivos Envolvidos</h2>
-      <table class="tabela-arquivos">
-        <thead>
-          <tr>
-            <th>Nome do Arquivo</th>
-            <th>Data de Upload</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>disciplinas_marco.csv</td>
-            <td>15/03/2025</td>
-            <td><a href="#" class="baixar">Baixar</a></td>
-          </tr>
-          <tr>
-            <td>turmas_integral.csv</td>
-            <td>15/03/2025</td>
-            <td><a href="#" class="baixar">Baixar</a></td>
-          </tr>
-          <tr>
-            <td>usuarios.csv</td>
-            <td>15/03/2025</td>
-            <td><a href="#" class="baixar">Baixar</a></td>
-          </tr>
-          <tr>
-            <td>vinculos.csv</td>
-            <td>15/03/2025</td>
-            <td><a href="#" class="baixar">Baixar</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 </template>
