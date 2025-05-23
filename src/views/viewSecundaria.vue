@@ -60,6 +60,31 @@
               </div>
             </div>
             <button class="form-button" :disabled="!isPeriodoValid" @click="completePeriodo">Continuar</button>
+            <v-card
+             v-if="currentErrors.length > 0 || emptyFields.length > 0"
+              class="pa-4 mb-4"
+              outlined
+              color="red lighten-5"
+              style="max-height: 250px; overflow-y: auto;"
+            >
+              <div v-if="currentErrors.length > 0">
+                <strong>Erros encontrados na planilha:</strong>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-else-if="emptyFields.length > 0">
+                <strong>Campos obrigatórios vazios:</strong>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
+                </ul>
+              </div>
+            </v-card>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="disciplinas">
@@ -78,7 +103,7 @@
                 <input
                   type="file"
                   class="input-file"
-                  ref="fileInput"
+                  :ref="`${tab}FileInput`"
                   required
                   @change="handleFileUpload"
                   accept=".csv"
@@ -134,6 +159,7 @@
                       <input
                         v-model="row[col]"
                         class="editable-cell"
+                        :class="{ 'input-error': !row[col]?.trim() }"
                         :placeholder="'Vazio'"
                         style="width: 100%; padding: 4px"
                       />
@@ -143,6 +169,31 @@
               </table>
               <button class="form-button" @click="completeDisciplinas" style="margin-left: 40px">Continuar</button>
             </div>
+            <v-card
+             v-if="currentErrors.length > 0 || emptyFields.length > 0"
+              class="pa-4 mb-4"
+              outlined
+              color="red lighten-5"
+              style="max-height: 250px; overflow-y: auto;"
+            >
+              <div v-if="currentErrors.length > 0">
+                <strong>Erros encontrados na planilha:</strong>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-else-if="emptyFields.length > 0">
+                <strong>Campos obrigatórios vazios:</strong>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
+                </ul>
+              </div>
+            </v-card>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="turmas">
@@ -157,7 +208,7 @@
                 <input
                   type="file"
                   class="input-file"
-                  ref="fileInput"
+                  :ref="`${tab}FileInput`"
                   required
                   @change="handleFileUpload"
                   accept=".csv"
@@ -213,15 +264,41 @@
                       <input
                         v-model="row[col]"
                         class="editable-cell"
+                        :class="{ 'input-error': !row[col]?.trim() }"
                         :placeholder="'Vazio'"
                         style="width: 100%; padding: 4px"
                       />
                     </td>
                   </tr>
                 </tbody>
-              </table>
+              </table>          
               <button class="form-button" @click="completeTurmas" style="margin-left: 40px">Continuar</button>
             </div>
+            <v-card
+             v-if="currentErrors.length > 0 || emptyFields.length > 0"
+              class="pa-4 mb-4"
+              outlined
+              color="red lighten-5"
+              style="max-height: 250px; overflow-y: auto;"
+            >
+              <div v-if="currentErrors.length > 0">
+                <strong>Erros encontrados na planilha:</strong>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-else-if="emptyFields.length > 0">
+                <strong>Campos obrigatórios vazios:</strong>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
+                </ul>
+              </div>
+            </v-card>
           </v-tabs-window-item>
           <v-tabs-window-item value="usuarios">
             <form
@@ -239,7 +316,7 @@
                 <input
                   type="file"
                   class="input-file"
-                  ref="fileInput"
+                  :ref="`${tab}FileInput`"
                   required
                   @change="handleFileUpload"
                   accept=".csv"
@@ -295,6 +372,7 @@
                       <input
                         v-model="row[col]"
                         class="editable-cell"
+                        :class="{ 'input-error': !row[col]?.trim() }"
                         :placeholder="'Vazio'"
                         style="width: 100%; padding: 4px"
                       />
@@ -304,6 +382,31 @@
               </table>
               <button class="form-button" @click="completeUsuarios" style="margin-left: 40px">Continuar</button>
             </div>
+            <v-card
+             v-if="currentErrors.length > 0 || emptyFields.length > 0"
+              class="pa-4 mb-4"
+              outlined
+              color="red lighten-5"
+              style="max-height: 250px; overflow-y: auto;"
+            >
+              <div v-if="currentErrors.length > 0">
+                <strong>Erros encontrados na planilha:</strong>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-else-if="emptyFields.length > 0">
+                <strong>Campos obrigatórios vazios:</strong>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
+                </ul>
+              </div>
+            </v-card>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="vinculos">
@@ -322,7 +425,7 @@
                 <input
                   type="file"
                   class="input-file"
-                  ref="fileInput"
+                  :ref="`${tab}FileInput`"
                   required
                   @change="handleFileUpload"
                   accept=".csv"
@@ -378,6 +481,7 @@
                       <input
                         v-model="row[col]"
                         class="editable-cell"
+                        :class="{ 'input-error': !row[col]?.trim() }"
                         :placeholder="'Vazio'"
                         style="width: 100%; padding: 4px"
                       />
@@ -416,6 +520,7 @@ export default {
       return {
       showErrorModal: false,
       currentErrors: [],
+      emptyFields: [],
         tab: 'periodo',
         loading: false,
         errorMessage: '', 
@@ -456,13 +561,38 @@ export default {
       );
     },
   },
+  watch: {
+    tableDataByTab: {
+      handler(novoValor) {
+        const camposVazios = [];
+
+        for (const [nomeTabela, dados] of Object.entries(novoValor)) {
+          dados.tableData.forEach((linha, linhaIndex) => {
+            for (const [chave, valor] of Object.entries(linha)) {
+              if (!valor || valor.toString().trim() === '') {
+                camposVazios.push(
+                  `Aba "${nomeTabela}" - Linha ${linhaIndex + 1}: campo "${chave}" está vazio`
+                );
+              }
+            }
+          });
+        }
+
+        this.emptyFields = camposVazios;
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   methods: {
     showErrors(errors) {
       this.currentErrors = errors;
       this.showErrorModal = true;
     },
     triggerFileInput() {
-      this.$refs.fileInput.click();
+      const refName = `${this.tab}FileInput`;
+      const input = this.$refs[refName];
+      if (input) input.click();
     },
     handleDragOver(event) {
       event.preventDefault();
