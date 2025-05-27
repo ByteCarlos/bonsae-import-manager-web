@@ -5,6 +5,13 @@
       <img src="/src/assets/academy-2.png" alt="Logo Bonsae" width="110px" />
     </header>
 
+    <div v-if="loadingSubmit" class="loading-overlay">
+      <div class="spinner-container">
+        <v-progress-circular indeterminate size="48" color="white" />
+        <p>Enviando dados...</p>
+      </div>
+    </div>
+
     <div class="topo-conteudo-secundaria">
       <h1>Importação de Dados - Controle de Processo</h1>
       <p>Gerencie e controle suas importações de dados de forma eficiente.</p>
@@ -46,10 +53,11 @@
               </div>
             </div>
             <button class="form-button" :disabled="!isPeriodoValid" @click="completePeriodo">Continuar</button>
+
             <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
               color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
               <div v-if="currentErrors.length > 0">
-                <strong>Erros encontrados na planilha:</strong>
+                <strong>Erros encontrados</strong>
                 <ul>
                   <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
                     {{ erro }}
@@ -120,12 +128,12 @@
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
                       <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
-                        :placeholder="'Vazio'" style="width: 100%; padding: 4px" />
+                        placeholder="Vazio" />
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <button class="form-button" @click="completeDisciplinas" style="margin-left: 40px">Continuar</button>
+              <button class="form-button continuar-btn" @click="completeDisciplinas">Continuar</button>
             </div>
             <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
               color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
@@ -201,12 +209,12 @@
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
                       <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
-                        :placeholder="'Vazio'" style="width: 100%; padding: 4px" />
+                        placeholder="Vazio" />
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <button class="form-button" @click="completeTurmas" style="margin-left: 40px">Continuar</button>
+              <button class="form-button continuar-btn" @click="completeTurmas">Continuar</button>
             </div>
             <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
               color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
@@ -229,6 +237,8 @@
               </div>
             </v-card>
           </v-tabs-window-item>
+
+
           <v-tabs-window-item value="usuarios">
             <form class="form-disciplinas" action="" enctype="multipart/form-data">
               <h3 class="titulodisciplinas">Usuários</h3>
@@ -280,12 +290,12 @@
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
                       <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
-                        :placeholder="'Vazio'" style="width: 100%; padding: 4px" />
+                        placeholder="Vazio" />
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <button class="form-button" @click="completeUsuarios" style="margin-left: 40px">Continuar</button>
+              <button class="form-button continuar-btn" @click="completeUsuarios">Continuar</button>
             </div>
             <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
               color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
@@ -361,7 +371,7 @@
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
                       <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
-                        :placeholder="'Vazio'" style="width: 100%; padding: 4px" />
+                        placeholder="Vazio" />
                     </td>
                   </tr>
                 </tbody>
@@ -392,11 +402,12 @@ export default {
       emptyFields: [],
       tab: 'periodo',
       loading: false,
+      loadingSubmit: false,
       errorMessage: '',
       tableDataByTab: {
         disciplinas: { tableData: [], columns: [] },
-        turmas:       { tableData: [], columns: [] },
-        usuarios:     { tableData: [], columns: [] }
+        turmas: { tableData: [], columns: [] },
+        usuarios: { tableData: [], columns: [] }
       },
       completed: {
         periodo: false,
@@ -417,19 +428,19 @@ export default {
       const { periodoLetivo, dataInicial, dataFinal } = this.periodoForm;
       const regexPeriodo = /^\d{4}\/[12]$/;
       if (!regexPeriodo.test(periodoLetivo.trim())) return false;
-      if (!dataInicial || !dataFinal)               return false;
+      if (!dataInicial || !dataFinal) return false;
       const inicio = new Date(dataInicial);
-      const fim    = new Date(dataFinal);
-      if (inicio > fim)                             return false;
+      const fim = new Date(dataFinal);
+      if (inicio > fim) return false;
       return true;
     }
   },
   watch: {
     tab() {
-      this.currentErrors   = [];
-      this.emptyFields     = [];
-      this.errorMessage    = '';
-      this.showErrorModal  = false;
+      this.currentErrors = [];
+      this.emptyFields = [];
+      this.errorMessage = '';
+      this.showErrorModal = false;
     },
     tableDataByTab: {
       handler(novoValor) {
@@ -460,13 +471,13 @@ export default {
       this.periodoForm.periodoLetivo = v;
     },
     showErrors(errors) {
-      this.currentErrors  = errors;
-      this.modalMessage   = 'Corrija todos os erros antes de continuar.';
+      this.currentErrors = errors;
+      this.modalMessage = 'Corrija todos os erros antes de continuar.';
       this.showErrorModal = true;
     },
     triggerFileInput() {
       const refName = `${this.tab}FileInput`;
-      const input   = this.$refs[refName];
+      const input = this.$refs[refName];
       if (input) input.click();
     },
     handleDragOver(event) {
@@ -492,15 +503,15 @@ export default {
           complete: (result) => {
             let validation;
             if (this.tab === 'disciplinas') validation = validateDisciplinaCsv(result);
-            if (this.tab === 'turmas')       validation = validateTurmaCsv(result);
-            if (this.tab === 'usuarios')     validation = validateUsuarioCsv(result);
+            if (this.tab === 'turmas') validation = validateTurmaCsv(result);
+            if (this.tab === 'usuarios') validation = validateUsuarioCsv(result);
             if (!validation.isValid) {
               this.showErrors(validation.errors || [validation.error]);
               this.loading = false;
               return;
             }
             this.tableDataByTab[this.tab].tableData = validation.data;
-            this.tableDataByTab[this.tab].columns   = result.meta.fields;
+            this.tableDataByTab[this.tab].columns = result.meta.fields;
             this.loading = false;
           },
           error: (error) => {
@@ -515,8 +526,13 @@ export default {
     async submitData() {
       const dataToSubmit = this.tableDataByTab[this.tab]?.tableData;
       if (!dataToSubmit?.length) return;
-      console.log('Submetendo dados:', dataToSubmit);
-      return new Promise((resolve) => setTimeout(resolve, 500));
+      this.loadingSubmit = true;
+      try {
+        console.log('Submetendo dados:', dataToSubmit);
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+      } finally {
+        this.loadingSubmit = false
+      }
     },
     completePeriodo() {
       const errors = [];
@@ -527,7 +543,7 @@ export default {
         errors.push('Preencha data inicial e final.');
       } else {
         const inicio = new Date(this.periodoForm.dataInicial);
-        const fim    = new Date(this.periodoForm.dataFinal);
+        const fim = new Date(this.periodoForm.dataFinal);
         if (inicio > fim) errors.push('Data inicial não pode ser depois da data final.');
       }
       if (errors.length) {
@@ -535,9 +551,9 @@ export default {
         this.showErrors(errors);
         return;
       }
-      this.periodoError    = '';
+      this.periodoError = '';
       this.completed.periodo = true;
-      this.tab              = 'disciplinas';
+      this.tab = 'disciplinas';
     },
     async completeDisciplinas() {
       const data = this.tableDataByTab.disciplinas?.tableData;
@@ -546,26 +562,26 @@ export default {
         return;
       }
       if (this.currentErrors.length || this.emptyFields.length) {
-        this.modalMessage   = 'Corrija todos os erros antes de prosseguir.';
+        this.modalMessage = 'Corrija todos os erros antes de prosseguir.';
         this.showErrorModal = true;
         return;
       }
       try {
         await this.submitData();
         this.completed.disciplinas = true;
-        this.tab                   = 'turmas';
+        this.tab = 'turmas';
       } catch (error) {
-        console.error('Erro ao submeter Disciplinas:', error);
+        //console.error('Erro ao submeter Disciplinas:', error);
         this.errorMessage = 'Erro ao submeter os dados de Disciplinas.';
       }
     },
     completeTurmas() {
       this.completed.turmas = true;
-      this.tab              = 'usuarios';
+      this.tab = 'usuarios';
     },
     completeUsuarios() {
       this.completed.usuarios = true;
-      this.tab                = 'vinculos';
+      this.tab = 'vinculos';
     }
   }
 };
