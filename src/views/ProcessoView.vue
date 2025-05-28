@@ -95,7 +95,7 @@ export default {
     const carregarDetalhes = async () => {
       try {
         const id = route.params.id
-        const res = await api.get(`/processos/${id}`)
+        const res = await api.get(`/process/${id}`)
         processo.value = res.data
       } catch (err) {
         console.error('Erro ao buscar detalhes do processo:', err)

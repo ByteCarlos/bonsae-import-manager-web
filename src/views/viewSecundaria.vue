@@ -388,6 +388,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { parse } from "papaparse";
 import { validateDisciplinaCsv } from "../stores/validateDisciplinaCsv";
 import { validateTurmaCsv } from "../stores/validateTurmaCsv";
@@ -528,9 +529,17 @@ export default {
       if (!dataToSubmit?.length) return;
       this.loadingSubmit = true;
       try {
-        console.log('Submetendo dados:', dataToSubmit);
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-      } finally {
+        await axios.post('/import/csv', {
+          processId: this.periodoForm.periodoLetivo,
+          tab: this.tab,
+          data: dataToSubmit
+        });
+        this.errorMessage = '';
+        console.log('Dados submetidos com sucesso:', this.tab, dataToSubmit);
+      } catch (error) {
+          console.error('Erro ao submeter dados:', error);
+        } 
+        finally {
         this.loadingSubmit = false
       }
     },
