@@ -388,7 +388,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from "@/services/api";
 import { parse } from "papaparse";
 import { validateDisciplinaCsv } from "../stores/validateDisciplinaCsv";
 import { validateTurmaCsv } from "../stores/validateTurmaCsv";
@@ -408,13 +408,15 @@ export default {
       tableDataByTab: {
         disciplinas: { tableData: [], columns: [] },
         turmas: { tableData: [], columns: [] },
-        usuarios: { tableData: [], columns: [] }
+        usuarios: { tableData: [], columns: [] },
+        vinculos: { tableData: [], columns: [] }
       },
       completed: {
         periodo: false,
         disciplinas: false,
         turmas: false,
-        usuarios: false
+        usuarios: false,
+        vinculos: false
       },
       periodoForm: {
         periodoLetivo: '',
@@ -495,22 +497,34 @@ export default {
       const selectedFile = event.target.files[0];
       if (!selectedFile) return;
       this.loading = true;
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const csv = e.target.result;
+
         parse(csv, {
           header: true,
           skipEmptyLines: true,
           complete: (result) => {
             let validation;
+
             if (this.tab === 'disciplinas') validation = validateDisciplinaCsv(result);
             if (this.tab === 'turmas') validation = validateTurmaCsv(result);
             if (this.tab === 'usuarios') validation = validateUsuarioCsv(result);
+
+            if (this.tab === 'vinculos') {
+              this.tableDataByTab[this.tab].tableData = result.data;
+              this.tableDataByTab[this.tab].columns = result.meta.fields;
+              this.loading = false;
+              return;
+            }
+
             if (!validation.isValid) {
               this.showErrors(validation.errors || [validation.error]);
               this.loading = false;
               return;
             }
+
             this.tableDataByTab[this.tab].tableData = validation.data;
             this.tableDataByTab[this.tab].columns = result.meta.fields;
             this.loading = false;
@@ -522,25 +536,36 @@ export default {
           }
         });
       };
+
       reader.readAsText(selectedFile);
     },
     async submitData() {
       const dataToSubmit = this.tableDataByTab[this.tab]?.tableData;
       if (!dataToSubmit?.length) return;
+
       this.loadingSubmit = true;
+
       try {
-        await axios.post('/import/csv', {
-          processId: this.periodoForm.periodoLetivo,
-          tab: this.tab,
-          data: dataToSubmit
+        await api.post('import/csv', {
+          data: {
+            data: [
+              {
+                type: this.tab,
+                data: dataToSubmit
+              }
+            ]
+          }
         });
+
+
         this.errorMessage = '';
         console.log('Dados submetidos com sucesso:', this.tab, dataToSubmit);
+
       } catch (error) {
-          console.error('Erro ao submeter dados:', error);
-        } 
-        finally {
-        this.loadingSubmit = false
+        console.error('Erro ao submeter dados:', error);
+        this.errorMessage = error.message;
+      } finally {
+        this.loadingSubmit = false;
       }
     },
     completePeriodo() {
@@ -560,6 +585,8 @@ export default {
         this.showErrors(errors);
         return;
       }
+
+      this.submitData('periodo')
       this.periodoError = '';
       this.completed.periodo = true;
       this.tab = 'disciplinas';
@@ -576,21 +603,40 @@ export default {
         return;
       }
       try {
-        await this.submitData();
+        await this.submitData('disciplinas');
         this.completed.disciplinas = true;
         this.tab = 'turmas';
       } catch (error) {
-        //console.error('Erro ao submeter Disciplinas:', error);
         this.errorMessage = 'Erro ao submeter os dados de Disciplinas.';
       }
     },
     completeTurmas() {
+      this.submitData('turmas')
       this.completed.turmas = true;
       this.tab = 'usuarios';
     },
     completeUsuarios() {
+      this.submitData('usuarios')
       this.completed.usuarios = true;
       this.tab = 'vinculos';
+    },
+    completeVinculos() {
+      const data = this.tableDataByTab.vinculos?.tableData;
+      if (!data?.length) {
+        this.errorMessage = 'Nenhum dado foi carregado para Vínculos.';
+        return;
+      }
+      if (this.currentErrors.length || this.emptyFields.length) {
+        this.modalMessage = 'Corrija todos os erros antes de prosseguir.';
+        this.showErrorModal = true;
+        return;
+      }
+      try {
+        this.submitData('vinculos');
+        this.completed.vinculos = true;
+      } catch (error) {
+        this.errorMessage = 'Erro ao submeter os dados de Vínculos.';
+      }
     }
   }
 };
