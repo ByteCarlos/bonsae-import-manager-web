@@ -19,86 +19,72 @@
 
         
 
-        <table class="tabela-processos">
-          <thead>
-            <tr>
-              <th>ID do Processo</th>
-              <th>Período Letivo</th>
-              <th>Data de Início</th>
-              <th>Data de Término</th>
-              <th>Status</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>03042025</td>
-              <td>2024/1</td>
-              <td>03/04/2025</td>
-              <td>-</td>
-              <td><span class="status pendente">Pendente</span></td>
-              <td>
-                <button class="botaoTabela" id="botaoAbortar">Abortar</button>
-                <button class="botaoTabela" id="botaoContinuar">Continuar</button>
-              </td>
-            </tr>
-            <tr>
-              <td>17032025</td>
-              <td>2024/1</td>
-              <td>17/03/2025</td>
-              <td>20/03/2025</td>
-              <td><span class="status concluido">Concluída</span></td>
-              <td>
-                <RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
-                  Visualizar </RouterLink>
-              </td>
-            </tr>
-            <tr>
-              <td>17032025</td>
-              <td>2024/1</td>
-              <td>17/03/2025</td>
-              <td>20/03/2025</td>
-              <td><span class="status concluido">Concluída</span></td>
-              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
-                Visualizar </RouterLink></td>
-            </tr>
-            <tr>
-              <td>17032025</td>
-              <td>2024/1</td>
-              <td>17/03/2025</td>
-              <td>20/03/2025</td>
-              <td><span class="status concluido">Concluída</span></td>
-              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
-                Visualizar </RouterLink></td>
-            </tr>
-            <tr>
-              <td>17032025</td>
-              <td>2024/1</td>
-              <td>17/03/2025</td>
-              <td>20/03/2025</td>
-              <td><span class="status concluido">Concluída</span></td>
-              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
-                Visualizar </RouterLink></td>
-            </tr>
-            <tr>
-              <td>17032025</td>
-              <td>2024/1</td>
-              <td>17/03/2025</td>
-              <td>20/03/2025</td>
-              <td><span class="status concluido">Concluída</span></td>
-              <td><RouterLink to="/detalhes" class="botaoTabela" id="botaoVizualizar">
-                Visualizar </RouterLink></td>
-            </tr>
-     
-          </tbody>
-        </table>
-      
+        <div class="topo-conteudo">
+      <div>
+        <h1>Importação de Dados - Controle de Processo</h1>
+        <p>Gerencie e controle suas importações de dados de forma eficiente.</p>
+      </div>
+      <RouterLink to="/secundaria" class="botao" id="botaoNovoProcesso">
+        Novo Processo
+      </RouterLink>
     </div>
-  </template>
 
-  
+    <table class="tabela-processos">
+      <thead>
+        <tr>
+          <th>ID do Processo</th>
+          <th>Período Letivo</th>
+          <th>Data de Início</th>
+          <th>Data de Término</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="processo in processos" :key="processo._id">
+          <td>{{ processo.idProcesso }}</td>
+          <td>{{ processo.periodoLetivo }}</td>
+          <td>{{ formatarData(processo.dataInicio) }}</td>
+          <td>{{ processo.dataTermino ? formatarData(processo.dataTermino) : '-' }}</td>
+          <td>
+            <span :class="['status', processo.status.toLowerCase()]">{{ processo.status }}</span>
+          </td>
+          <td>
+            <button v-if="processo.status === 'Pendente'" class="botaoTabela">Abortar</button>
+            <button v-if="processo.status === 'Pendente'" class="botaoTabela">Continuar</button>
+            <RouterLink v-else to="/detalhes" class="botaoTabela">Visualizar</RouterLink>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
 
-  
-  <script>
+<script>
+import api from '@/services/api'
 
-  </script>
+export default {
+  data() {
+    return {
+      processos: []
+    }
+  },
+  methods: {
+    async carregarProcessos() {
+      try {
+        const resposta = await api.get('/process') 
+        this.processos = resposta.data
+      } catch (erro) {
+        console.error('Erro ao carregar processos:', erro)
+      }
+    },
+    formatarData(dataISO) {
+      const data = new Date(dataISO)
+      return data.toLocaleDateString('pt-BR')
+    }
+  },
+  mounted() {
+    this.carregarProcessos()
+  }
+}
+</script>
