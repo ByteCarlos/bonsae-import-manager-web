@@ -49,9 +49,7 @@
             <button v-if="processo.status === 'Pendente'" class="botaoTabela">
               Continuar
             </button>
-            <RouterLink v-else to="/detalhes" class="botaoTabela"
-              >Visualizar</RouterLink
-            >
+            <RouterLink v-else to="/detalhes" class="botaoTabela">Visualizar</RouterLink>
           </td>
         </tr>
       </tbody>
@@ -70,7 +68,7 @@ export default {
   methods: {
     async carregarProcessos() {
       try {
-        const resposta = await api.get('/process')
+        // const resposta = await api.get('/process')
         this.processos = resposta.data
       } catch (erro) {
         console.error('Erro ao carregar processos:', erro)

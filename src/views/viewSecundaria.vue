@@ -634,13 +634,25 @@ export default {
 
       reader.readAsText(selectedFile);
     },
-    async submitData() {
-      const dataToSubmit = this.tableDataByTab[this.tab]?.tableData;
-      if (!dataToSubmit?.length) return;
-
+    async submitData(tab) {
       this.loadingSubmit = true;
 
       try {
+        let type;
+        let dataToSubmit;
+
+        if (tab === 'periodo') {
+          dataToSubmit = [{ ...this.periodoForm }];
+        } else if (this.tab === 'disciplinas') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+        } else if (this.tab === 'turmas') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+        } else if (this.tab === 'usuarios') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+        } else if (this.tab === 'vinculos') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+
+        }
         await api.post('import/csv', {
           data: {
             data: [
@@ -652,9 +664,8 @@ export default {
           }
         });
 
-
         this.errorMessage = '';
-        console.log('Dados submetidos com sucesso:', this.tab, dataToSubmit);
+        console.log('Dados submetidos com sucesso:', type, dataToSubmit);
 
       } catch (error) {
         console.error('Erro ao submeter dados:', error);
