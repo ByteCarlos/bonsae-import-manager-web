@@ -354,11 +354,7 @@
               </v-card>
             </v-dialog>
 
-            <div v-if="
-              !loading &&
-              tableDataByTab[tab] &&
-              tableDataByTab[tab].tableData.length
-            ">
+            <div v-if="!loading && tableDataByTab[tab] && tableDataByTab[tab].tableData.length">
               <table class="csv-table">
                 <thead>
                   <tr>
@@ -376,7 +372,29 @@
                   </tr>
                 </tbody>
               </table>
+              <button class="form-button continuar-btn" @click="completeVinculos">Continuar</button>
             </div>
+
+            <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
+              color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
+              <div v-if="currentErrors.length > 0">
+                <strong>Erros encontrados na planilha:</strong>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-else-if="emptyFields.length > 0">
+                <strong>Campos obrigatórios vazios:</strong>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
+                </ul>
+              </div>
+            </v-card>
           </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
@@ -539,13 +557,25 @@ export default {
 
       reader.readAsText(selectedFile);
     },
-    async submitData() {
-      const dataToSubmit = this.tableDataByTab[this.tab]?.tableData;
-      if (!dataToSubmit?.length) return;
-
+    async submitData(tab) {
       this.loadingSubmit = true;
 
       try {
+        let type;
+        let dataToSubmit;
+
+        if (tab === 'periodo') {
+          dataToSubmit = [{ ...this.periodoForm }];
+        } else if (this.tab === 'disciplinas') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+        } else if (this.tab === 'turmas') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+        } else if (this.tab === 'usuarios') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+        } else if (this.tab === 'vinculos') {
+          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
+
+        }
         await api.post('import/csv', {
           data: {
             data: [
@@ -557,9 +587,8 @@ export default {
           }
         });
 
-
         this.errorMessage = '';
-        console.log('Dados submetidos com sucesso:', this.tab, dataToSubmit);
+        console.log('Dados submetidos com sucesso:', type, dataToSubmit);
 
       } catch (error) {
         console.error('Erro ao submeter dados:', error);
