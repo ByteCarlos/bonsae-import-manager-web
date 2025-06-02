@@ -373,15 +373,19 @@
               style="max-height: 250px; overflow-y: auto;">
               <div v-if="currentErrors.length">
                 <strong>Erros encontrados na planilha:</strong>
-                <ul><li v-for="(erro, index) in currentErrors" :key="'erro-' + index">{{ erro }}</li></ul>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">{{ erro }}</li>
+                </ul>
               </div>
               <div v-else-if="emptyFields.length">
                 <strong>Campos obrigatórios vazios:</strong>
-                <ul><li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">{{ campo }}</li></ul>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">{{ campo }}</li>
+                </ul>
               </div>
             </v-card>
           </v-tabs-window-item>
-          
+
           <v-tabs-window-item value="vinculosProfessores" @click="tab = 'vinculosProfessores'">
             <form class="form-disciplinas" action="" enctype="multipart/form-data">
               <h3 class="titulodisciplinas">Vínculos Professores</h3>
@@ -436,11 +440,15 @@
               style="max-height: 250px; overflow-y: auto;">
               <div v-if="currentErrors.length">
                 <strong>Erros encontrados na planilha:</strong>
-                <ul><li v-for="(erro, index) in currentErrors" :key="'erro-' + index">{{ erro }}</li></ul>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">{{ erro }}</li>
+                </ul>
               </div>
               <div v-else-if="emptyFields.length">
                 <strong>Campos obrigatórios vazios:</strong>
-                <ul><li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">{{ campo }}</li></ul>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">{{ campo }}</li>
+                </ul>
               </div>
             </v-card>
 
@@ -456,7 +464,7 @@
               </v-card>
             </v-dialog>
           </v-tabs-window-item>
-          
+
         </v-tabs-window>
       </v-card-text>
     </v-card>
@@ -560,6 +568,11 @@ export default {
     }
   },
   methods: {
+
+
+    removerAcentos(texto) {
+      return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    },
     onPeriodoInput(evt) {
       let v = evt.target.value.replace(/\D/g, '').slice(0, 5);
       if (v.length > 4) {
@@ -638,42 +651,106 @@ export default {
       this.loadingSubmit = true;
 
       try {
-        let type;
-        let dataToSubmit;
-
-        if (tab === 'periodo') {
-          dataToSubmit = [{ ...this.periodoForm }];
-        } else if (this.tab === 'disciplinas') {
-          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
-        } else if (this.tab === 'turmas') {
-          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
-        } else if (this.tab === 'usuarios') {
-          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
-        } else if (this.tab === 'vinculos') {
-          dataToSubmit = [...this.tableDataByTab[this.tab].tableData];
-
+        let periodoName = '';
+        if (this.periodoForm.periodoLetivo.endsWith('/1')) {
+          periodoName = '1º Semestre';
+        } else if (this.periodoForm.periodoLetivo.endsWith('/2')) {
+          periodoName = '2º Semestre';
+        } else {
+          periodoName = this.periodoForm.periodoLetivo;
         }
-        await api.post('import/csv', {
-          data: {
-            data: [
-              {
-                type: this.tab,
-                data: dataToSubmit
-              }
-            ]
-          }
-        });
+
+
+        const periodoCode = this.periodoForm.periodoLetivo.replace('/', '-');
+
+
+        const mapStatusToState = status => {
+          if (!status) return 0;
+          const s = status.toLowerCase();
+          if (s === 'ativo') return 1;
+          if (s === 'inativo') return 0;
+          return 0;
+        };
+
+        const payload = {
+          processId: 'process_' + periodoCode.replace('-', '_'),
+          schoolPeriod: {
+            code: periodoCode,
+            name: periodoName,
+            startDate: new Date(this.periodoForm.dataInicial).toISOString(),
+            endDate: new Date(this.periodoForm.dataFinal).toISOString()
+          },
+          subjects: [],
+          classes: [],
+          users: [],
+          enrollments: []
+        };
+
+        if (tab === 'disciplinas') {
+          payload.subjects = (this.tableDataByTab.disciplinas.tableData || []).map(d => ({
+            periodId: periodoCode,
+            code: d["Código da Disciplina*"],
+            name: d["Disciplina"],
+            category: this.removerAcentos(d["Categoria"]),
+            state: mapStatusToState(d["Estado"]),
+            campus: d["Campus"],
+            startDate: new Date(d["Data Inicial"]).toISOString(),
+            endDate: new Date(d["Data Final"]).toISOString(),
+            period: d["Período"] || null,
+          }));
+        }
+
+        if (tab === 'turmas') {
+          payload.classes = (this.tableDataByTab.turmas.tableData || []).map(t => ({
+            subjectCode: t["Disciplina (Código)"],
+            shift: t["Turno"],
+            name: t["Turma"],
+            code: t["Código da turma"],
+          }));
+        }
+
+        if (tab === 'usuarios') {
+          payload.subjects = this.tableDataByTab.disciplinas.tableData || [];
+          payload.classes = this.tableDataByTab.turmas.tableData || [];
+          payload.users = this.tableDataByTab.usuarios.tableData || [];
+        }
+        if (tab === 'vinculosAlunos' || tab === 'vinculosProfessores') {
+          payload.subjects = this.tableDataByTab.disciplinas.tableData || [];
+          payload.classes = this.tableDataByTab.turmas.tableData || [];
+          payload.users = this.tableDataByTab.usuarios.tableData || [];
+
+          const alunos = (this.tableDataByTab.vinculosAlunos?.tableData || []).map(item => ({
+            subjectCode: item.subjectCode,
+            classCode: item.classCode,
+            registrationNumber: item.registrationNumber,
+            email: item.email,
+            professor: false,
+          }));
+
+          const professores = (this.tableDataByTab.vinculosProfessores?.tableData || []).map(item => ({
+            subjectCode: item.subjectCode,
+            classCode: item.classCode,
+            registrationNumber: item.registrationNumber,
+            email: item.email,
+            professor: true,
+          }));
+
+          payload.enrollments = [...alunos, ...professores];
+        }
+
+        await api.post('import/csv', payload);
 
         this.errorMessage = '';
-        console.log('Dados submetidos com sucesso:', type, dataToSubmit);
+        console.log('Dados submetidos com sucesso:', tab, payload);
 
       } catch (error) {
         console.error('Erro ao submeter dados:', error);
-        this.errorMessage = error.message;
+        this.errorMessage = error.message || 'Erro desconhecido.';
       } finally {
         this.loadingSubmit = false;
       }
     },
+
     completePeriodo() {
       const errors = [];
       if (!/^\d{4}\/[12]$/.test(this.periodoForm.periodoLetivo)) {
@@ -692,11 +769,12 @@ export default {
         return;
       }
 
-      this.submitData('periodo')
+      this.submitData('periodo');
       this.periodoError = '';
       this.completed.periodo = true;
       this.tab = 'disciplinas';
     },
+
     async completeDisciplinas() {
       const data = this.tableDataByTab.disciplinas?.tableData;
       if (!data?.length) {
@@ -716,22 +794,38 @@ export default {
         this.errorMessage = 'Erro ao submeter os dados de Disciplinas.';
       }
     },
-    completeTurmas() {
-      this.submitData('turmas')
-      this.completed.turmas = true;
-      this.tab = 'usuarios';
+
+    async completeTurmas() {
+      try {
+        await this.submitData('turmas');
+        this.completed.turmas = true;
+        this.tab = 'usuarios';
+      } catch (error) {
+        this.errorMessage = 'Erro ao submeter os dados de Turmas.';
+      }
     },
-    completeUsuarios() {
-      this.submitData('usuarios')
-      this.completed.usuarios = true;
-      this.tab = 'vinculosAlunos';
+
+    async completeUsuarios() {
+      try {
+        await this.submitData('usuarios');
+        this.completed.usuarios = true;
+        this.tab = 'vinculosAlunos';
+      } catch (error) {
+        this.errorMessage = 'Erro ao submeter os dados de Usuários.';
+      }
     },
-    completevinculosAlunos() {
-      this.submitData('usuarios')
-      this.completed.usuarios = true;
-      this.tab = 'vinculosProfessores';
+
+    async completevinculosAlunos() {
+      try {
+        await this.submitData('vinculosAlunos');
+        this.completed.vinculosAlunos = true;
+        this.tab = 'vinculosProfessores';
+      } catch (error) {
+        this.errorMessage = 'Erro ao submeter os dados de Vínculos Alunos.';
+      }
     },
-    completevinculosProfessores() {
+
+    async completevinculosProfessores() {
       const data = this.tableDataByTab.vinculosProfessores?.tableData;
       if (!data?.length) {
         this.errorMessage = 'Nenhum dado foi carregado para Vínculos.';
@@ -743,22 +837,25 @@ export default {
         return;
       }
       try {
-        this.submitData('vinculosProfessores');
+        await this.submitData('vinculosProfessores');
         this.completed.vinculosProfessores = true;
       } catch (error) {
         this.errorMessage = 'Erro ao submeter os dados de Vínculos.';
       }
     },
+
     cancelarFinalizacao() {
-    this.modalConfirmacao = false;
-    this.currentTab = 0;
+      this.modalConfirmacao = false;
+      this.currentTab = 0;
     },
+
     finalizarProcesso() {
       this.modalConfirmacao = false;
       this.$router.push({ name: 'ViewPrincipal' });
     }
   }
-};
+}
+
 </script>
 
 <style>

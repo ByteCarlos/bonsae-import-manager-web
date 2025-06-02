@@ -20,36 +20,22 @@
       <thead>
         <tr>
           <th>ID do Processo</th>
-          <th>Período Letivo</th>
-          <th>Data de Início</th>
-          <th>Data de Término</th>
-          <th>Status</th>
+          <th>Status Atual</th>
           <th>Ação</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="processo in processos" :key="processo._id">
-          <td>{{ processo.idProcesso }}</td>
-          <td>{{ processo.periodoLetivo }}</td>
-          <td>{{ formatarData(processo.dataInicio) }}</td>
+          <td>{{ processo.processId }}</td>
           <td>
-            {{
-              processo.dataTermino ? formatarData(processo.dataTermino) : "-"
-            }}
+            <span :class="['status', processo.currentStatus?.toLowerCase()]">
+              {{ formatarStatus(processo.currentStatus) }}
+            </span>
           </td>
           <td>
-            <span :class="['status', processo.status.toLowerCase()]">{{
-              processo.status
-            }}</span>
-          </td>
-          <td>
-            <button v-if="processo.status === 'Pendente'" class="botaoTabela">
-              Abortar
-            </button>
-            <button v-if="processo.status === 'Pendente'" class="botaoTabela">
-              Continuar
-            </button>
-            <RouterLink v-else to="/detalhes" class="botaoTabela">Visualizar</RouterLink>
+            <RouterLink to="/detalhes" class="botaoTabela">
+              Visualizar
+            </RouterLink>
           </td>
         </tr>
       </tbody>
@@ -59,28 +45,65 @@
 
 <script>
 import api from "@/services/api";
+
 export default {
   data() {
     return {
       processos: []
-    }
+    };
   },
   methods: {
     async carregarProcessos() {
       try {
-        // const resposta = await api.get('/process')
-        this.processos = resposta.data
+        // const resposta = await api.get("/process");
+        this.processos = resposta.data;
       } catch (erro) {
-        console.error('Erro ao carregar processos:', erro)
+        console.error("Erro ao carregar processos:", erro);
       }
     },
-    formatarData(dataISO) {
-      const data = new Date(dataISO)
-      return data.toLocaleDateString('pt-BR')
+    formatarStatus(status) {
+      switch ((status || "").toUpperCase()) {
+        case "INICIADO":
+          return "Iniciado";
+        case "PENDENTE":
+          return "Pendente";
+        case "CONCLUIDO":
+        case "CONCLUÍDO":
+          return "Concluído";
+        default:
+          return "Indefinido";
+      }
     }
   },
   mounted() {
-    this.carregarProcessos()
+    this.carregarProcessos();
   }
-}
+};
 </script>
+
+<style scoped>
+.status {
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  font-weight: 600;
+  color: white;
+  text-transform: capitalize;
+}
+
+.status.iniciado {
+  background-color: #2a9d8f;
+  /* verde-azulado */
+}
+
+.status.pendente {
+  background-color: #e9c46a;
+  /* amarelo */
+  color: #333;
+}
+
+.status.concluido {
+  background-color: #264653;
+  /* azul escuro */
+}
+</style>
+s
