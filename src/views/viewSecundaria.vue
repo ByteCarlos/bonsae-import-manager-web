@@ -25,8 +25,8 @@
         <v-tab value="disciplinas" :disabled="!completed.periodo">Disciplinas</v-tab>
         <v-tab value="turmas" :disabled="!completed.disciplinas">Turmas</v-tab>
         <v-tab value="usuarios" :disabled="!completed.turmas">Usuários</v-tab>
-        <v-tab value="vinculos" :disabled="!completed.usuarios">Vínculos</v-tab>
-
+        <v-tab value="vinculosAlunos" :disabled="!completed.usuarios">Vínculos Alunos</v-tab>
+        <v-tab value="vinculosProfessores" :disabled="!completed.vinculosAlunos">Vínculos Professores</v-tab>
       </v-tabs>
 
       <v-card-text>
@@ -115,7 +115,7 @@
             <div v-if="
               !loading &&
               tableDataByTab[tab] &&
-              tableDataByTab[tab].tableData.length
+              tableDataByTab[tab].columns && tableDataByTab[tab].columns.length
             ">
               <table class="csv-table">
                 <thead>
@@ -128,7 +128,8 @@
                 <tbody>
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
-                      <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
+                      <input v-model="row[col]" class="editable-cell"
+                        :class="{ 'input-error': !(typeof row[col] === 'string' ? row[col].trim() : row[col] !== undefined && row[col] !== null && row[col] !== '') }"
                         placeholder="Vazio" />
                     </td>
                   </tr>
@@ -196,7 +197,7 @@
             <div v-if="
               !loading &&
               tableDataByTab[tab] &&
-              tableDataByTab[tab].tableData.length
+              tableDataByTab[tab].columns && tableDataByTab[tab].columns.length
             ">
               <table class="csv-table">
                 <thead>
@@ -209,7 +210,8 @@
                 <tbody>
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
-                      <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
+                      <input v-model="row[col]" class="editable-cell"
+                        :class="{ 'input-error': !(typeof row[col] === 'string' ? row[col].trim() : row[col] !== undefined && row[col] !== null && row[col] !== '') }"
                         placeholder="Vazio" />
                     </td>
                   </tr>
@@ -277,7 +279,7 @@
             <div v-if="
               !loading &&
               tableDataByTab[tab] &&
-              tableDataByTab[tab].tableData.length
+              tableDataByTab[tab].columns && tableDataByTab[tab].columns.length
             ">
               <table class="csv-table">
                 <thead>
@@ -290,7 +292,8 @@
                 <tbody>
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
-                      <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
+                      <input v-model="row[col]" class="editable-cell"
+                        :class="{ 'input-error': !(typeof row[col] === 'string' ? row[col].trim() : row[col] !== undefined && row[col] !== null && row[col] !== '') }"
                         placeholder="Vazio" />
                     </td>
                   </tr>
@@ -319,10 +322,10 @@
               </div>
             </v-card>
           </v-tabs-window-item>
-          <v-tabs-window-item value="vinculos" @click="tab = 'vinculos'">
-            <form class="form-disciplinas" enctype="multipart/form-data">
-              <h3 class="titulodisciplinas">Vínculos (Alunos e Professores)</h3>
 
+          <v-tabs-window-item value="vinculosAlunos">
+            <form class="form-disciplinas" enctype="multipart/form-data">
+              <h3 class="titulodisciplinas">Vínculos Alunos</h3>
               <div class="dropbox" @dragover="handleDragOver" @drop="handleDrop" @click="triggerFileInput">
                 <input type="file" class="input-file" :ref="`${tab}FileInput`" required @change="handleFileUpload"
                   accept=".csv" style="display: none" />
@@ -340,8 +343,12 @@
                 <v-card-title class="text-h6">{{ modalMessage }}</v-card-title>
                 <v-card-text>
                   <ul>
-                    <li v-for="(error, index) in currentErrors" :key="'modal-erro-' + index">{{ error }}</li>
-                    <li v-for="(campo, index) in emptyFields" :key="'modal-vazio-' + index">{{ campo }}</li>
+                    <li v-for="(error, index) in currentErrors" :key="'modal-erro-' + index">
+                      {{ error }}
+                    </li>
+                    <li v-for="(campo, index) in emptyFields" :key="'modal-vazio-' + index">
+                      {{ campo }}
+                    </li>
                   </ul>
                 </v-card-text>
                 <v-card-actions>
@@ -351,17 +358,103 @@
               </v-card>
             </v-dialog>
 
-            <div v-if="!loading && tableDataByTab[tab]">
+            <div v-if="
+              !loading &&
+              tableDataByTab[tab] &&
+              tableDataByTab[tab].columns && tableDataByTab[tab].columns.length
+            ">
               <table class="csv-table">
                 <thead>
                   <tr>
-                    <th v-for="col in tableDataByTab[tab].columns" :key="col">{{ col }}</th>
+                    <th v-for="col in tableDataByTab[tab].columns" :key="col">
+                      {{ col }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
                     <td v-for="col in tableDataByTab[tab].columns" :key="col">
-                      <input v-model="row[col]" class="editable-cell" :class="{ 'input-error': !row[col]?.trim() }"
+                      <input v-model="row[col]" class="editable-cell"
+                        :class="{ 'input-error': !(typeof row[col] === 'string' ? row[col].trim() : row[col] !== undefined && row[col] !== null && row[col] !== '') }"
+                        placeholder="Vazio" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button class="form-button continuar-btn" @click="completevinculosAlunos">Continuar</button>
+            </div>
+            <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
+              color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
+              <div v-if="currentErrors.length > 0">
+                <strong>Erros encontrados na planilha:</strong>
+                <ul>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-else-if="emptyFields.length > 0">
+                <strong>Campos obrigatórios vazios:</strong>
+                <ul>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
+                </ul>
+              </div>
+            </v-card>
+          </v-tabs-window-item>
+
+          <v-tabs-window-item value="vinculosProfessores">
+            <form class="form-disciplinas" enctype="multipart/form-data">
+              <h3 class="titulodisciplinas">Vínculos Professores</h3>
+              <div class="dropbox" @dragover="handleDragOver" @drop="handleDrop" @click="triggerFileInput">
+                <input type="file" class="input-file" :ref="`${tab}FileInput`" required @change="handleFileUpload"
+                  accept=".csv" style="display: none" />
+                <img src="/src/assets/ICON-DOWLOADA.jpg" alt="" width="30px" />
+                <p>Arraste e solte um arquivo CSV ou clique para selecionar</p>
+              </div>
+            </form>
+
+            <div v-if="loading">
+              <p>Carregando dados...</p>
+            </div>
+
+            <v-dialog v-model="showErrorModal" max-width="600">
+              <v-card>
+                <v-card-title class="text-h6">{{ modalMessage }}</v-card-title>
+                <v-card-text>
+                  <ul>
+                    <li v-for="(error, index) in currentErrors" :key="'modal-erro-' + index">
+                      {{ error }}
+                    </li>
+                    <li v-for="(campo, index) in emptyFields" :key="'modal-vazio-' + index">
+                      {{ campo }}
+                    </li>
+                  </ul>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click="showErrorModal = false">Fechar</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <div
+              v-if="!loading && tableDataByTab[tab] && tableDataByTab[tab].columns && tableDataByTab[tab].columns.length">
+              <table class="csv-table">
+                <thead>
+                  <tr>
+                    <th v-for="col in tableDataByTab[tab].columns" :key="col">
+                      {{ col }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, index) in tableDataByTab[tab].tableData" :key="index">
+                    <td v-for="col in tableDataByTab[tab].columns" :key="col">
+                      <input v-model="row[col]" class="editable-cell"
+                        :class="{ 'input-error': !(typeof row[col] === 'string' ? row[col].trim() : row[col] !== undefined && row[col] !== null && row[col] !== '') }"
                         placeholder="Vazio" />
                     </td>
                   </tr>
@@ -369,25 +462,28 @@
               </table>
               <button class="form-button continuar-btn" @click="modalConfirmacao = true">Continuar</button>
             </div>
-
-            <!-- Erros -->
-            <v-card v-if="currentErrors.length || emptyFields.length" class="pa-4 mb-4" outlined color="red lighten-5"
-              style="max-height: 250px; overflow-y: auto;">
-              <div v-if="currentErrors.length">
+            <v-card v-if="currentErrors.length > 0 || emptyFields.length > 0" class="pa-4 mb-4" outlined
+              color="red lighten-5" style="max-height: 250px; overflow-y: auto;">
+              <div v-if="currentErrors.length > 0">
                 <strong>Erros encontrados na planilha:</strong>
                 <ul>
-                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">{{ erro }}</li>
+                  <li v-for="(erro, index) in currentErrors" :key="'erro-' + index">
+                    {{ erro }}
+                  </li>
                 </ul>
               </div>
-              <div v-else-if="emptyFields.length">
+
+              <div v-else-if="emptyFields.length > 0">
                 <strong>Campos obrigatórios vazios:</strong>
                 <ul>
-                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">{{ campo }}</li>
+                  <li v-for="(campo, index) in emptyFields" :key="'vazio-' + index">
+                    {{ campo }}
+                  </li>
                 </ul>
               </div>
             </v-card>
 
-            <!-- Confirmação -->
+
             <v-dialog v-model="modalConfirmacao" max-width="500">
               <v-card>
                 <v-card-title class="headline">Deseja finalizar o processo?</v-card-title>
@@ -399,20 +495,9 @@
               </v-card>
             </v-dialog>
           </v-tabs-window-item>
-
         </v-tabs-window>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="modalConfirmacao" max-width="500">
-      <v-card>
-        <v-card-title class="headline">Deseja finalizar o processo?</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text color="red" @click="cancelarFinalizacao">Cancelar</v-btn>
-          <v-btn text color="green" @click="finalizarProcesso">Finalizar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-alert v-if="errorMessage" type="error" dismissible class="mb-4">
       {{ errorMessage }}
     </v-alert>
@@ -433,6 +518,7 @@ export default {
     return {
       showErrorModal: false,
       modalMessage: '',
+      proccessId: '',
       currentErrors: [],
       emptyFields: [],
       tab: 'periodo',
@@ -444,14 +530,16 @@ export default {
         disciplinas: { tableData: [], columns: [] },
         turmas: { tableData: [], columns: [] },
         usuarios: { tableData: [], columns: [] },
-        vinculos: { tableData: [], columns: [] },
+        vinculosAlunos: { tableData: [], columns: [] },
+        vinculosProfessores: { tableData: [], columns: [] },
       },
       completed: {
         periodo: false,
         disciplinas: false,
         turmas: false,
         usuarios: false,
-        vinculos: false,
+        vinculosAlunos: false,
+        vinculosProfessores: false,
       },
       periodoForm: {
         periodoLetivo: '',
@@ -551,7 +639,8 @@ export default {
             if (this.tab === 'disciplinas') validation = validateDisciplinaCsv(result);
             if (this.tab === 'turmas') validation = validateTurmaCsv(result);
             if (this.tab === 'usuarios') validation = validateUsuarioCsv(result);
-            if (this.tab === 'vinculos') validation = validateVinculoAlunoCsv(result)
+            if (this.tab === 'vinculosAlunos') validation = validateVinculoAlunoCsv(result);
+            if (this.tab === 'vinculosProfessores') validation = validateVinculoProfessorCsv(result);
 
             if (!validation.isValid) {
               this.showErrors(validation.errors || [validation.error]);
@@ -589,6 +678,8 @@ export default {
 
         const periodoCode = this.periodoForm.periodoLetivo.replace('/', '-');
 
+        const proccessId = 'process_' + periodoCode.replace('-', '_');
+        this.proccessId = proccessId;
 
         const mapStatusToState = status => {
           if (!status) return 0;
@@ -599,7 +690,7 @@ export default {
         };
 
         const payload = {
-          processId: 'process_' + periodoCode.replace('-', '_'),
+          processId: proccessId,
           schoolPeriod: {
             code: periodoCode,
             name: periodoName,
@@ -648,18 +739,24 @@ export default {
             observations: u["Observações"]
           }));
         }
-        if (tab === 'vinculos') {
-          payload.subjects = this.tableDataByTab.disciplinas?.tableData || [];
-          payload.classes = this.tableDataByTab.turmas?.tableData || [];
-          payload.users = this.tableDataByTab.usuarios?.tableData || [];
-
-          payload.enrollments = (this.tableDataByTab.vinculosAlunos?.tableData || []).map(item => ({
-            subjectCode: item["Disciplina (Código)"],
+        if (tab === 'vinculosAlunos' || tab === 'vinculosProfessores') {
+          const alunos = (this.tableDataByTab.vinculosAlunos?.tableData || []).map(item => ({
+            subjectCode: item["Código da Disciplina"],
             classCode: item["Turma"],
             registrationNumber: item["Matrícula"],
             email: item["Email"],
             professor: false,
-          }))
+          }));
+
+          const professores = (this.tableDataByTab.vinculosProfessores?.tableData || []).map(item => ({
+            subjectCode: item["Código da Disciplina"],
+            classCode: item["Turma"],
+            registrationNumber: item["Matrícula"],
+            email: item["Email"],
+            professor: true,
+          }));
+
+          payload.enrollments = [...alunos, ...professores];
         }
 
         await api.post('import/csv', payload);
@@ -670,6 +767,8 @@ export default {
       } catch (error) {
         console.error('Erro ao submeter dados:', error);
         this.errorMessage = error.message || 'Erro desconhecido.';
+        throw errorMessage;
+
       } finally {
         this.loadingSubmit = false;
       }
@@ -733,7 +832,7 @@ export default {
       try {
         await this.submitData('usuarios');
         this.completed.usuarios = true;
-        this.tab = 'vinculos';
+        this.tab = 'vinculosAlunos';
       } catch (error) {
         this.errorMessage = 'Erro ao submeter os dados de Usuários.';
       }
@@ -741,11 +840,29 @@ export default {
 
     async completevinculosAlunos() {
       try {
-        await this.submitData('vinculos');
         this.completed.vinculosAlunos = true;
-        this.tab = 'vinculos';
+        this.tab = 'vinculosProfessores';
       } catch (error) {
         this.errorMessage = 'Erro ao submeter os dados de Vínculos';
+      }
+    },
+    async completevinculosProfessores() {
+      const data = this.tableDataByTab.vinculosProfessores?.tableData;
+      if (!data?.length) {
+        this.errorMessage = 'Nenhum dado foi carregado para Vínculos.';
+        return;
+      }
+      if (this.currentErrors.length || this.emptyFields.length) {
+        this.modalMessage = 'Corrija todos os erros antes de prosseguir.';
+        this.showErrorModal = true;
+        return;
+      }
+      try {
+        await this.submitData('vinculosProfessores');
+        this.completed.vinculosProfessores = true;
+        this.modalConfirmacao = true;
+      } catch (error) {
+        this.errorMessage = 'Erro ao submeter os dados de Vínculos Professores.';
       }
     },
     cancelarFinalizacao() {
@@ -755,7 +872,11 @@ export default {
 
     finalizarProcesso() {
       this.modalConfirmacao = false;
-      this.$router.push({ name: 'ViewPrincipal' });
+      this.completevinculosProfessores();
+      api.post(`/import/save-documents/${this.proccessId}`);
+      this.$router.push({
+        name: 'ViewPrincipal'
+      });
     }
   }
 }

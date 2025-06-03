@@ -1,5 +1,5 @@
 export const requiredColumnsVinculo = [
-  "Disciplina (Código)",
+  "Código da Disciplina",
   "Turma",
   "Matrícula",
   "Email",
@@ -32,11 +32,7 @@ export const validateVinculoAlunoCsv = (csvData) => {
 
     requiredColumnsVinculo.forEach((column) => {
       const value = row[column];
-      if (
-        value === undefined ||
-        value === null ||
-        value.toString().trim() === ""
-      ) {
+      if (!value || value.toString().trim() === "") {
         errors.push(`Linha ${index + 2}: Campo "${column}" não preenchido.`);
       }
     });
@@ -48,21 +44,9 @@ export const validateVinculoAlunoCsv = (csvData) => {
     return { isValid: false, error: "Nenhuma linha válida encontrada." };
   }
 
-  // Mapeia para o formato do backend
-  const data = validRows.map((row) => ({
-    subjectCode: row["Código da Disciplina"],
-    classCode: row["Turma"],
-    registrationNumber: row["Matrícula"],
-    email: row["Email"],
-    professor:
-      row["professor"] === true ||
-      row["professor"] === "true" ||
-      row["professor"] === "1",
-  }));
-
   return {
-    isValid: errors.length === 0,
-    data,
+    isValid: true,
+    data: validRows,
     warnings: errors,
   };
 };

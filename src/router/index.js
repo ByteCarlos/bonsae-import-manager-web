@@ -1,16 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import CsvUploadView from '@/views/CsvUploadView.vue';
-import viewPrincipal  from '@/views/viewPrincipal.vue';
-import viewSecundaria from '@/views/viewSecundaria.vue';
-import ProcessoView from '@/views/ProcessoView.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import CsvUploadView from "@/views/CsvUploadView.vue";
+import viewPrincipal from "@/views/viewPrincipal.vue";
+import viewSecundaria from "@/views/viewSecundaria.vue";
+import ProcessoView from "@/views/ProcessoView.vue";
 
 const routes = [
-  { path: '/csv', component: CsvUploadView },
-  {path: '/', component: viewPrincipal},
+  { path: "/csv", component: CsvUploadView },
+  { path: "/", name: "ViewPrincipal", component: viewPrincipal },
 
-  {path: '/secundaria', component: viewSecundaria},
-  {path: '/detalhes', component: ProcessoView}
-
+  { path: "/secundaria", component: viewSecundaria },
+  { path: "/detalhes", component: ProcessoView },
 ];
 
 const router = createRouter({
