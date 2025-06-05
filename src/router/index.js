@@ -9,7 +9,7 @@ const routes = [
   { path: "/", name: "ViewPrincipal", component: viewPrincipal },
 
   { path: "/secundaria", component: viewSecundaria },
-  { path: "/detalhes", component: ProcessoView },
+  { path: "/detalhes/:id", name: 'DetalhesProcesso', component: ProcessoView },
 ];
 
 const router = createRouter({

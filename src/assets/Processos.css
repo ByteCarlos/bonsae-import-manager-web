@@ -114,3 +114,48 @@
     margin-bottom: 10px;
     display: inline-block;
 }
+
+.professores,
+.alunos,
+.disciplinas {
+  margin-top: 40px;
+}
+
+.tabela-professores,
+.tabela-alunos,
+.tabela-disciplinas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabela-professores th,
+.tabela-alunos th,
+.tabela-disciplinas th {
+  background: #f3f4f6;
+  text-align: left;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.tabela-professores td,
+.tabela-alunos td,
+.tabela-disciplinas td {
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.tabela-professores td,
+.tabela-alunos td,
+.tabela-disciplinas td {
+  word-break: break-word;
+}
+
+.professores h2,
+.alunos h2,
+.disciplinas h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #111827;
+}

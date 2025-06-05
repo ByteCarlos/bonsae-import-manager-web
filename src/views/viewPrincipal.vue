@@ -25,15 +25,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="processo in processos" :key="processo._id">
-          <td>{{ processo.processId }}</td>
+        <tr v-for="item in processos" :key="item.process._id">
+          <td>{{ item.process.processId }}</td>
           <td>
-            <span :class="['status', processo.currentStatus?.toLowerCase()]">
-              {{ formatarStatus(processo.currentStatus) }}
+            <span :class="['status', item.process.currentStatus?.toLowerCase()]">
+              {{ formatarStatus(item.process.currentStatus) }}
             </span>
           </td>
           <td>
-            <RouterLink to="/detalhes" class="botaoTabela">
+            <RouterLink :to="{ name: 'DetalhesProcesso', params: { id: item.process.processId } }" class="botaoTabela">
               Visualizar
             </RouterLink>
           </td>
@@ -55,7 +55,7 @@ export default {
   methods: {
     async carregarProcessos() {
       try {
-        // const resposta = await api.get("/process");
+        const resposta = await api.get("/process");
         this.processos = resposta.data;
       } catch (erro) {
         console.error("Erro ao carregar processos:", erro);
